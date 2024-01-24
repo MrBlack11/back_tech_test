@@ -1,5 +1,5 @@
 services:
-    laravel.test:
+    api:
         build:
             context: ./vendor/laravel/sail/runtimes/8.3
             dockerfile: Dockerfile
@@ -23,10 +23,7 @@ services:
             - sail
         depends_on:
             - mysql
-            - redis
-            - meilisearch
-            - mailpit
-            - selenium
+
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
@@ -55,10 +52,7 @@ services:
 networks:
     sail:
         driver: bridge
+
 volumes:
     sail-mysql:
-        driver: local
-    sail-redis:
-        driver: local
-    sail-meilisearch:
         driver: local
