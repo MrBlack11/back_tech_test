@@ -2,9 +2,9 @@
 
 namespace App\Repositories;
 
+use App\Models\Car;
 use App\Models\UserCar;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 class UserRepository extends AbstractRepository
 {
@@ -15,11 +15,14 @@ class UserRepository extends AbstractRepository
         parent::__construct($this->model);
     }
 
-    public function listCars(int $id): Collection | null
+    public function listCars(int $id)
     {
-        $obj = $this->model::find($id);
-
-        return $obj?->cars;
+        return Car::selectRaw("cars.*")
+            ->join(
+                "user_cars",
+                fn ($join) => $join->on("user_cars.car_id", "=", 'cars.id')->where('user_cars.user_id', '=', $id)
+            )
+            ->paginate();
     }
 
     public function addCar(int $id, int $carId): UserCar
