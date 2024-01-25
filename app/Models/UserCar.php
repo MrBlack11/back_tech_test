@@ -5,8 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class CarUser extends Pivot
+class UserCar extends Pivot
 {
+    protected $table = "user_cars";
+
     protected $fillable = [
         'car_id',
         'user_id'

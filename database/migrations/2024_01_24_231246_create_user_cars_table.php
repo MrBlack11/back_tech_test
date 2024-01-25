@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('car_users', function (Blueprint $table) {
+        Schema::create('user_cars', function (Blueprint $table) {
             $table->id();
             $table->foreignId('car_id');
             $table->foreignId('user_id');
@@ -27,12 +27,11 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('car_users');
+        Schema::dropIfExists('user_cars');
     }
 };
