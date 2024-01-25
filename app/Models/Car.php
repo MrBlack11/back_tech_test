@@ -19,6 +19,10 @@ class Car extends Model
         'color'
     ];
 
+    protected $hidden = [
+        'deleted_at'
+    ];
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'car_users');
