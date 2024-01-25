@@ -7,7 +7,7 @@ use App\Services\UserService;
 class UserController extends AbstractController
 {
     public function __construct(
-        private UserService $service
+        private readonly UserService $service
     )
     {
         parent::__construct($this->service);

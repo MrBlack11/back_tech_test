@@ -3,14 +3,13 @@
 namespace App\Services;
 
 use App\Repositories\CarRepository;
-use Illuminate\Database\Eloquent\Model;
 
 class CarService extends AbstractService
 {
     public function __construct(
-        private Model $model
+        private readonly CarRepository $repository
     )
     {
-        parent::__construct(new CarRepository($this->model));
+        parent::__construct($this->repository);
     }
 }

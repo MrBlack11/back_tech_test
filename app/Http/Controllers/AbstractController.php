@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 abstract class AbstractController extends Controller
 {
     public function __construct(
-        private AbstractService $service
+        private readonly AbstractService $service
     )
     {
     }

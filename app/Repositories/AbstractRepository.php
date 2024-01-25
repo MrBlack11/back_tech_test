@@ -2,14 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 abstract class AbstractRepository
 {
     public function __construct(
-        private Model $model
+        private readonly Model $model
     )
     {
     }

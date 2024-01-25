@@ -2,12 +2,11 @@
 
 namespace App\Providers;
 
-use App\Http\Controllers\CarController;
-use App\Http\Controllers\UserController;
 use App\Models\Car;
 use App\Models\User;
-use App\Services\CarService;
-use App\Services\UserService;
+use App\Repositories\CarRepository;
+use App\Repositories\UserRepository;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,16 +18,16 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->app->when(UserController::class)
-            ->needs(UserService::class)
-            ->give(function () {
-                return new UserService(new User());
+        $this->app->when(CarRepository::class)
+            ->needs(Model::class)
+            ->give(function() {
+                return new Car();
             });
 
-        $this->app->when(CarController::class)
-            ->needs(CarService::class)
-            ->give(function() {
-                return new CarService(new Car());
+        $this->app->when(UserRepository::class)
+            ->needs(Model::class)
+            ->give(function () {
+                return new User();
             });
     }
 }
