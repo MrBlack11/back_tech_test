@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class CarRepository extends AbstractRepository
 {
-    public function __construct(Model $model)
+    public function __construct(
+        private readonly Model $model
+    )
     {
-        parent::__construct($model);
+        parent::__construct($this->model);
     }
 }

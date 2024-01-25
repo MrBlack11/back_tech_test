@@ -31,6 +31,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'deleted_at'
     ];
 
     /**
@@ -45,6 +46,6 @@ class User extends Authenticatable
 
     public function cars(): BelongsToMany
     {
-        return $this->belongsToMany(Car::class, 'car_users');
+        return $this->belongsToMany(Car::class, 'user_cars');
     }
 }

@@ -9,10 +9,11 @@ use Illuminate\Support\Collection;
 abstract class AbstractService
 {
     public function __construct(
-        private AbstractRepository $repository
+        private readonly AbstractRepository $repository
     )
     {
     }
+
     public function list(): Collection
     {
         return $this->repository->list();
