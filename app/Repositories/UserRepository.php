@@ -17,14 +17,18 @@ class UserRepository extends AbstractRepository
         parent::__construct($this->model);
     }
 
-    public function listCars(int $id)
+    public function listCars(array $pagination, int $id)
     {
+        $perPage = $pagination['per_page'] ?? 10;
+
         return Car::selectRaw("cars.*")
             ->join(
                 "user_cars",
-                fn($join) => $join->on("user_cars.car_id", "=", 'cars.id')->where('user_cars.user_id', '=', $id)
+                fn($join) => $join
+                    ->on("user_cars.car_id", "=", 'cars.id')
+                    ->where('user_cars.user_id', '=', $id)
             )
-            ->paginate();
+            ->simplePaginate($perPage);
     }
 
     public function addCar(int $id, int $carId): UserCar

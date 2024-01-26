@@ -14,9 +14,9 @@ class UserService extends AbstractService
         parent::__construct($this->repository);
     }
 
-    public function listCars(int $id)
+    public function listCars(array $request, int $id)
     {
-        return $this->repository->listCars($id);
+        return $this->repository->listCars($request, $id);
     }
 
     public function addCar(int $id, int $carId): UserCar

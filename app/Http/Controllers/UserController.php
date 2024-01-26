@@ -18,9 +18,9 @@ class UserController extends AbstractController
         parent::__construct($this->service);
     }
 
-    public function listCars(int $id)
+    public function listCars(Request $request, int $id)
     {
-        $cars = $this->service->listCars($id);
+        $cars = $this->service->listCars($request->all(), $id);
 
         return response()->json($cars);
     }

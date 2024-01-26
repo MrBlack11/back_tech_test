@@ -253,4 +253,32 @@ class UserControllerTest extends TestCase
             ->assertStatus(404);
     }
 
+    /** @test */
+    public function should_list_user_cars(): void
+    {
+        $user = User::factory()->create();
+        $car = Car::factory()->create();
+
+        $payload = [
+            'car_id' => $car->id
+        ];
+
+        $this->post("/api/users/" . $user->id . "/cars", $payload)
+            ->assertStatus(200);
+
+        $this->get("/api/users/" . $user->id . "/cars")
+            ->assertStatus(200)
+            ->assertJsonStructure([
+                "current_page",
+                "data",
+                "first_page_url",
+                "from",
+                "next_page_url",
+                "path",
+                "per_page",
+                "prev_page_url",
+                "to"
+            ]);
+    }
+
 }
