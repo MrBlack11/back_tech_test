@@ -109,7 +109,6 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_update_user_sending_same_email(): void
     {
-        $this->markTestSkipped("need to cover same email updating, when add auth");
         $createdUser = User::factory()->create();
 
         $payload = [

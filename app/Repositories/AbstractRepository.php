@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Exceptions\NotFoundException;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Collection;
 
 abstract class AbstractRepository
@@ -27,7 +28,12 @@ abstract class AbstractRepository
     public function update(array $data, int $id): Model
     {
         $object = $this->getModelById($id);
-        $object->update($data);
+
+        try {
+            $object->update($data);
+        } catch (UniqueConstraintViolationException $exception) {
+            throw new \InvalidArgumentException("Duplication error.", 400);
+        }
 
         return $object;
     }
