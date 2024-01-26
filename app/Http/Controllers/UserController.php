@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Services\UserService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends AbstractController
 {
@@ -26,7 +27,10 @@ class UserController extends AbstractController
 
     public function addCar(Request $request, int $id)
     {
-        $this->service->addCar($id, $request->car_id);
+        return response()->json(
+            $this->service->addCar($id, $request->car_id),
+            Response::HTTP_OK
+        );
     }
 
     public function removeCar(int $id, int $carId)

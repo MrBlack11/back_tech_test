@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Car;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -182,4 +183,74 @@ class UserControllerTest extends TestCase
             ->assertStatus(404)
             ->assertJson(['message' => 'User not found.']);
     }
+
+    /** @test */
+    public function should_relate_user_and_car(): void
+    {
+        $user = User::factory()->create();
+        $car = Car::factory()->create();
+
+        $payload = [
+            'car_id' => $car->id
+        ];
+
+        $this->post("/api/users/" . $user->id . "/cars", $payload)
+            ->assertStatus(200);
+
+        $this->assertDatabaseHas(
+            'user_cars',
+            array_merge(['user_id' => $user->id], $payload)
+        );
+    }
+
+    /** @test */
+    public function should_not_relate_user_and_car_twice(): void
+    {
+        $user = User::factory()->create();
+        $car = Car::factory()->create();
+
+        $payload = [
+            'car_id' => $car->id
+        ];
+
+        $this->post("/api/users/" . $user->id . "/cars", $payload)
+            ->assertStatus(200);
+
+        $this->post("/api/users/" . $user->id . "/cars", $payload)
+            ->assertStatus(400)
+            ->assertJson(["message" => "The relation already exists."]);
+    }
+
+    /** @test */
+    public function should_remove_car_from_user(): void
+    {
+        $user = User::factory()->create();
+        $car = Car::factory()->create();
+
+        $payload = [
+            'car_id' => $car->id
+        ];
+
+        $this->post("/api/users/" . $user->id . "/cars", $payload)
+            ->assertStatus(200);
+
+        $this->delete("/api/users/" . $user->id . "/cars/" . $car->id)
+            ->assertStatus(204);
+
+        $this->assertDatabaseMissing(
+            'user_cars',
+            array_merge(['user_id' => $user->id], $payload)
+        );
+    }
+
+    /** @test */
+    public function should_remove_car_from_user_when_relation_not_exists(): void
+    {
+        $user = User::factory()->create();
+        $car = Car::factory()->create();
+
+        $this->delete("/api/users/" . $user->id . "/cars/" . $car->id)
+            ->assertStatus(404);
+    }
+
 }

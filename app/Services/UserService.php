@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\UserCar;
 use App\Repositories\UserRepository;
-use Illuminate\Support\Collection;
 
 class UserService extends AbstractService
 {
@@ -19,7 +19,7 @@ class UserService extends AbstractService
         return $this->repository->listCars($id);
     }
 
-    public function addCar(int $id, int $carId)
+    public function addCar(int $id, int $carId): UserCar
     {
         return $this->repository->addCar($id, $carId);
     }
