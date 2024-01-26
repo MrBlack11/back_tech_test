@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCarRequest;
+use App\Http\Requests\UpdateCarRequest;
 use App\Services\CarService;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -14,8 +16,8 @@ class CarController extends AbstractController
         parent::__construct($this->service);
     }
 
-    public function getFormValidator(): FormRequest
+    public function getFormValidator(bool $isUpdating): FormRequest
     {
-        return new FormRequest();
+        return $isUpdating ? new UpdateCarRequest() : new StoreCarRequest();
     }
 }

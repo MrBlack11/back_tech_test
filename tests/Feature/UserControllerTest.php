@@ -20,9 +20,7 @@ class UserControllerTest extends TestCase
 
         $response->assertStatus(200);
 
-        $listUsersData = json_decode($response->content());
-
-        $this->assertCount($createdUsers->count(), $listUsersData);
+        $this->assertCount($createdUsers->count(), json_decode($response->content()));
     }
 
     /** @test */
@@ -34,8 +32,8 @@ class UserControllerTest extends TestCase
             "name" => $this->faker->name
         ];
 
-        $createResponse = $this->post("/api/users", $payload);
-        $createResponse->assertStatus(201);
+        $this->post("/api/users", $payload)
+            ->assertStatus(201);
 
         unset($payload['password']);
         $this->assertDatabaseHas("users", $payload);
@@ -110,7 +108,7 @@ class UserControllerTest extends TestCase
     /** @test */
     public function should_update_user_sending_same_email(): void
     {
-        $this->markTestSkipped("need to cover same email updating");
+        $this->markTestSkipped("need to cover same email updating, when add auth");
         $createdUser = User::factory()->create();
 
         $payload = [
