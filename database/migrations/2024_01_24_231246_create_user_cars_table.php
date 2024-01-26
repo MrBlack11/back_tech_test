@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('car_id');
             $table->foreignId('user_id');
-
+            $table->unique(['car_id', 'user_id']);
             $table->foreign('car_id')
                 ->references('id')
                 ->on('cars')
