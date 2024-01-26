@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Exceptions\NotFoundException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -28,13 +29,25 @@ abstract class AbstractRepository
         return $this->model::where('id', $id)->update($data);
     }
 
-    public function find(int $id): Model | null
+    public function find(int $id): Model
     {
-        return $this->model::find($id);
+        return $this->getModelById($id);
     }
 
     public function delete(int $id): bool
     {
-        return $this->model::find($id)->delete();
+        return $this->getModelById($id)->delete();
+    }
+
+    private function getModelById(int $id): Model
+    {
+        $object = $this->model::find($id);
+        if (is_null($object)) {
+            throw new NotFoundException(
+                (new \ReflectionClass($this->model))->getShortName() . " not found.",
+            );
+        }
+
+        return $object;
     }
 }

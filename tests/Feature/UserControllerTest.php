@@ -61,7 +61,7 @@ class UserControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_not_create_user_without_required_fields()
+    public function should_not_create_user_without_required_fields(): void
     {
         $payload = [ // missing email
             "password" => $this->faker->password,
@@ -75,7 +75,7 @@ class UserControllerTest extends TestCase
     }
 
     /** @test */
-    public function should_not_create_user_without_wrong_fields()
+    public function should_not_create_user_without_wrong_fields(): void
     {
         $payload = [
             "email" => $this->faker->email,
@@ -87,5 +87,41 @@ class UserControllerTest extends TestCase
         $createResponse->assertStatus(422);
 
         $this->assertDatabaseCount("users", 0);
+    }
+
+    /** @test */
+    public function should_delete_user(): void
+    {
+        $createdUser = User::factory()->create();
+
+        $this->delete("/api/users/" . $createdUser->id)
+            ->assertStatus(204);
+
+        $this->assertDatabaseMissing("users", ['id' => $createdUser->id]);
+    }
+
+    /** @test */
+    public function should_not_delete_user_passing_wrong_user_id(): void
+    {
+        $this->delete("/api/users/1")
+            ->assertStatus(404)
+            ->assertJson(['message' => 'User not found.']);
+    }
+
+    /** @test */
+    public function should_retrieve_user_passing_id(): void
+    {
+        $createdUser = User::factory()->create();
+
+        $this->get("/api/users/" . $createdUser->id)
+            ->assertStatus(200);
+    }
+
+    /** @test */
+    public function should_not_retrieve_user_passing_wrong_id(): void
+    {
+        $this->get("/api/users/1")
+            ->assertStatus(404)
+            ->assertJson(['message' => 'User not found.']);
     }
 }

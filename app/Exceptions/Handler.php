@@ -33,5 +33,11 @@ class Handler extends ExceptionHandler
                 'errors' => json_decode($exception->getMessage())
             ], $exception->getCode());
         });
+
+        $this->renderable(function (NotFoundException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], $exception->getCode());
+        });
     }
 }
