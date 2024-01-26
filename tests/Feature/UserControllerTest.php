@@ -90,6 +90,66 @@ class UserControllerTest extends TestCase
     }
 
     /** @test */
+    public function should_update_user(): void
+    {
+        $createdUser = User::factory()->create();
+
+        $payload = [
+            "email" => $this->faker->email,
+            "password" => $this->faker->password,
+            "name" => $this->faker->name
+        ];
+
+        $createResponse = $this->put("/api/users/" . $createdUser->id, $payload);
+        $createResponse->assertStatus(200);
+
+        unset($payload['password']);
+        $this->assertDatabaseHas("users", $payload);
+    }
+
+    /** @test */
+    public function should_update_user_sending_same_email(): void
+    {
+        $this->markTestSkipped("need to cover same email updating");
+        $createdUser = User::factory()->create();
+
+        $payload = [
+            "email" => $createdUser->email,
+            "name" => $this->faker->name
+        ];
+
+        $createResponse = $this->put("/api/users/" . $createdUser->id, $payload);
+        $createResponse->assertStatus(200);
+
+        $this->assertDatabaseHas("users", $payload);
+    }
+
+    /** @test */
+    public function should_not_update_user_with_duplicated_email(): void
+    {
+        $firstUser = User::factory()->create();
+        $secondUser = User::factory()->create();
+
+        $payload = [
+            "email" => $secondUser->email,
+        ];
+
+        $this->put("/api/users/" . $firstUser->id, $payload)->assertStatus(422);
+    }
+
+    /** @test */
+    public function should_not_update_user_with_non_created_user_id(): void
+    {
+        $payload = [
+            "email" => $this->faker->email,
+        ];
+
+        $this->put("/api/users/1", $payload)
+            ->assertStatus(404)
+            ->assertJson(['message' => 'User not found.']);
+    }
+
+    /** @test */
     public function should_delete_user(): void
     {
         $createdUser = User::factory()->create();

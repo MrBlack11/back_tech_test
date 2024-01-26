@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\ValidationApiException;
 use App\Services\AbstractService;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 
 abstract class AbstractController extends Controller
@@ -17,52 +20,40 @@ abstract class AbstractController extends Controller
     {
     }
 
-    public function index()
+    public function index(): Collection
     {
         return $this->service->list();
     }
 
-    public function store(FormRequest $request)
+    public function store(FormRequest $request): Model
     {
         $this->validateErrors($request);
 
         return $this->service->create($request->all());
     }
 
-    public function show(int $id)
+    public function show(int $id): Model
     {
         return $this->service->find($id);
     }
 
-    public function update(FormRequest $request, int $id)
+    public function update(FormRequest $request, int $id): Model
     {
-        try {
-            return $this->service->update($request->all(), $id);
-        } catch (\DomainException $exception) {
-            return $this->respondWithError($exception->getMessage(), 404);
-        }
+        $this->validateErrors($request, true);
+
+        return $this->service->update($request->all(), $id);
     }
 
-    public function destroy(int $id)
+    public function destroy(int $id): Response|JsonResponse
     {
-        $wasRemoved = $this->service->delete($id);
+        $this->service->delete($id);
 
-        return $wasRemoved ?
-            response()->noContent() :
-            $this->respondWithError("Couln't remove object");
+        return response()->noContent();
     }
 
-    protected function respondWithError(string $message, int $statusCode = 500): JsonResponse
+    private function validateErrors(Request $request, bool $isUpdating = false): array
     {
-        return response()->json([
-            "error" => true,
-            "message" => $message
-        ], $statusCode);
-    }
-
-    public function validateErrors(Request $request): array
-    {
-        $formValidator = $this->getFormValidator();
+        $formValidator = $this->getFormValidator($isUpdating);
 
         $rules = $formValidator->rules();
         $validator = Validator::make($request->input(), $rules, $formValidator->messages());
@@ -74,5 +65,5 @@ abstract class AbstractController extends Controller
         return $validator->validate();
     }
 
-    abstract public function getFormValidator(): FormRequest;
+    abstract public function getFormValidator(bool $isUpdating): FormRequest;
 }

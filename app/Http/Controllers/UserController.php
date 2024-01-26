@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Services\UserService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
@@ -35,8 +36,8 @@ class UserController extends AbstractController
         return response()->noContent();
     }
 
-    public function getFormValidator(): FormRequest
+    public function getFormValidator(bool $isUpdating = false): FormRequest
     {
-        return new UserRequest();
+        return $isUpdating ? new UpdateUserRequest() : new StoreUserRequest();
     }
 }

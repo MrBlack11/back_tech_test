@@ -31,14 +31,7 @@ abstract class AbstractService
 
     public function update(array $data, int $id): Model
     {
-        $obj = $this->repository->find($id);
-        if (is_null($obj)) {
-            throw new \DomainException("Instance not found");
-        }
-
-        $this->repository->update($data, $id);
-
-        return $this->repository->find($id);
+        return $this->repository->update($data, $id);
     }
 
     public function delete(int $id): bool

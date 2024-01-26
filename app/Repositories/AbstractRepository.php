@@ -24,9 +24,12 @@ abstract class AbstractRepository
         return $this->model::all();
     }
 
-    public function update(array $data, int $id): bool
+    public function update(array $data, int $id): Model
     {
-        return $this->model::where('id', $id)->update($data);
+        $object = $this->getModelById($id);
+        $object->update($data);
+
+        return $object;
     }
 
     public function find(int $id): Model
