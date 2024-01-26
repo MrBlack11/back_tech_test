@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ValidationApiException;
 use App\Services\AbstractService;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 abstract class AbstractController extends Controller
 {
     public function __construct(
-        private readonly AbstractService $service
+        private readonly AbstractService $service,
     )
     {
     }
@@ -19,8 +22,10 @@ abstract class AbstractController extends Controller
         return $this->service->list();
     }
 
-    public function store(Request $request)
+    public function store(FormRequest $request)
     {
+        $this->validateErrors($request);
+
         return $this->service->create($request->all());
     }
 
@@ -29,7 +34,7 @@ abstract class AbstractController extends Controller
         return $this->service->find($id);
     }
 
-    public function update(Request $request, int $id)
+    public function update(FormRequest $request, int $id)
     {
         try {
             return $this->service->update($request->all(), $id);
@@ -54,4 +59,20 @@ abstract class AbstractController extends Controller
             "message" => $message
         ], $statusCode);
     }
+
+    public function validateErrors(Request $request): array
+    {
+        $formValidator = $this->getFormValidator();
+
+        $rules = $formValidator->rules();
+        $validator = Validator::make($request->input(), $rules, $formValidator->messages());
+
+        if ($validator->fails()) {
+            throw new ValidationApiException($validator->errors());
+        }
+
+        return $validator->validate();
+    }
+
+    abstract public function getFormValidator(): FormRequest;
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\CarService;
+use Illuminate\Foundation\Http\FormRequest;
 
 class CarController extends AbstractController
 {
@@ -11,5 +12,10 @@ class CarController extends AbstractController
     )
     {
         parent::__construct($this->service);
+    }
+
+    public function getFormValidator(): FormRequest
+    {
+        return new FormRequest();
     }
 }

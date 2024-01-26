@@ -26,5 +26,12 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+        $this->renderable(function (ValidationApiException $exception) {
+            return response()->json([
+                'message' => 'Something went wrong',
+                'errors' => json_decode($exception->getMessage())
+            ], $exception->getCode());
+        });
     }
 }

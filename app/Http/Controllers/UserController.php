@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use App\Services\UserService;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 
 class UserController extends AbstractController
@@ -31,5 +33,10 @@ class UserController extends AbstractController
         $this->service->removeCar($id, $carId);
 
         return response()->noContent();
+    }
+
+    public function getFormValidator(): FormRequest
+    {
+        return new UserRequest();
     }
 }
